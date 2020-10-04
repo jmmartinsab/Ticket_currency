@@ -12,7 +12,7 @@ generar las funciones necesarias para los cálculos que se piden*/
 
 let currentIndex = currencyEl.selectedIndex;
 let selectedCurrency = currencyEl.options[currentIndex].value;
-let priceRated = 0;//<---------- aqui defino priceRated
+let priceRated = 0; //<---------- aqui defino priceRated
 
 populateUI();
 calculate();
@@ -20,17 +20,18 @@ calculate();
 let ticketPrice = +movieSelect.value;
 
 //Fetch exchange rate
-function calculate() {//<------------- aquí hago el calculo precio entrada a la divisa
+function calculate() {
+  //<------------- aquí hago el calculo precio entrada a la divisa
   fetch(`https://api.exchangerate-api.com/v4/latest/${currencyEl.options[48].value}`)
     .then((res) => res.json())
     .then((data) => {
       const rate = data.rates[currencyEl.value];
 
-      priceRated = (ticketPrice * rate).toFixed(2);//<---- lo guardo en price rated
+      priceRated = (ticketPrice * rate).toFixed(2); //<---- lo guardo en price rated
 
       updateSelectedCount();
     });
-    return priceRated;
+  return priceRated;
 }
 
 //Save selected movie index and price
@@ -59,10 +60,12 @@ function updateSelectedCount() {
   });
 
   calculate();
-  priceRated= +priceRated;
+  priceRated = +priceRated;
 
   count.innerText = selectedSeatsCount;
-  total.innerText = (selectedSeatsCount * priceRated || selectedSeatsCount * ticketPrice).toFixed(2);
+  total.innerText = (selectedSeatsCount * priceRated || selectedSeatsCount * ticketPrice).toFixed(
+    2
+  );
   cur.innerText = currencyEl.value;
 }
 
@@ -106,7 +109,7 @@ currencyEl.addEventListener('change', (e) => {
   //añadido para actualizar el valor de la divisa a elegir
   selectedCurrency = +e.target.value;
   setCurrencyData(e.target.value);
-  calculate();//<----- ejecuto calculate siempre que cambio de divisa
+  calculate(); //<----- ejecuto calculate siempre que cambio de divisa
   updateSelectedCount();
 });
 
