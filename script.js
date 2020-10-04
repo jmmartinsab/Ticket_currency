@@ -15,6 +15,8 @@ console.log(currencyEl.selectedIndex);
 console.log(currentIndex);*/
 let currentIndex = currencyEl.selectedIndex;
 let selectedCurrency = currencyEl.options[currentIndex].value;
+let priceRated = 0;//<---------- aqui defino priceRated
+console.log(priceRated);
 
 populateUI();
 
@@ -22,24 +24,25 @@ let ticketPrice = +movieSelect.value;
 console.log(ticketPrice);
 
 //Fetch exchange rate
-function calculate() {
-  //no consigo obtener el rate para usarlo en la conversión
-  const currencyBase = currencyEl.options[48].value;
-  const selected = selectedCurrency;
-
-  fetch(`https://api.exchangerate-api.com/v4/latest/${currencyBase}`)
+function calculate() {//<------------- aquí hago el calculo precio entrada a la divisa
+  fetch(`https://api.exchangerate-api.com/v4/latest/${currencyEl.options[48].value}`)
     .then((res) => res.json())
     .then((data) => {
-      const rate = data.rates[selected];
+      debugger;
+      console.log(currencyEl.value);
+      const rate = data.rates[currencyEl.value];
       console.log(rate);
 
-      moviePrice.value = (moviePrice.value * rate).toFixed(2);
+      priceRated = (ticketPrice * rate).toFixed(2);//<---- lo guardo en price rated
+      console.log(priceRated);//<---- este console me devuelve el valor bueno
     });
+    return priceRated;
 }
+console.log(priceRated);//<----- pero este me vuelve a devolver 0
 
 movieSelect.querySelectorAll('.mov-curr').forEach((option) => {
   //no consigo hacer aparecer el nombre de la pelicula con el precio
-  option.innerText = `${ticketPrice}`;
+  option.innerText = `${movieSelect} ${ticketPrice}`;
 });
 
 //Save selected movie index and price
@@ -107,6 +110,7 @@ currencyEl.addEventListener('change', (e) => {
   //añadido para actualizar el valor de la divisa a elegir
   selectedCurrency = +e.target.value;
   setCurrencyData(e.target.value);
+  calculate();//<----- ejecuto calculate siempre que cambio de divisa
 });
 
 //Initial count and total set
