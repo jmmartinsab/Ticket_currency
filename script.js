@@ -6,10 +6,9 @@ const cur = document.getElementById('cur');
 const movieSelect = document.getElementById('movie');
 const currencyEl = document.getElementById('currency');
 
-/* Pruebas con la consola
-console.log(currencyEl.options[48].value);
-console.log(currencyEl.selectedIndex);
-console.log(currentIndex);*/
+/* Lo he podido conseguir todo salvo el poner los precios dentro de los option de las peliculas
+aunque he probado de varias formas no he encontrado la manera de hacerlo de forma efectiva, pero he podido 
+generar las funciones necesarias para los cálculos que se piden*/
 
 let currentIndex = currencyEl.selectedIndex;
 let selectedCurrency = currencyEl.options[currentIndex].value;
@@ -55,7 +54,7 @@ function updateSelectedCount() {
 
   const selectedSeatsCount = selectedSeats.length;
 
-  movieSelect.querySelectorAll('.mov-curr').forEach((_p) => {
+  movieSelect.querySelectorAll('.mov-curr').forEach((option) => {
     option.innerText = `${+priceRated} ${currencyEl.value}`;
   });
 
