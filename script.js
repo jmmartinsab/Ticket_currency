@@ -2,48 +2,37 @@ const container = document.querySelector('.container');
 const seats = document.querySelectorAll('.row .seat:not(.occupied)');
 const count = document.getElementById('count');
 const total = document.getElementById('total');
+const cur = document.getElementById('cur');
 const movieSelect = document.getElementById('movie');
 const currencyEl = document.getElementById('currency');
-
-/*Estoy teniendo problemas, porque aunque se lo que quiero hacer, cuando consigo algunas cosas no se como ensamblarlas correctamente para generar
-el resultado que quiero, es como que se que es lo que se necesita pero no como montarlo. Otro problema es que algunas de las cosas que intento
-no me dan el resultado esperado, a ver si me puedes ayudar a entender el problema en global para poder dar con la solución*/
 
 /* Pruebas con la consola
 console.log(currencyEl.options[48].value);
 console.log(currencyEl.selectedIndex);
 console.log(currentIndex);*/
+
 let currentIndex = currencyEl.selectedIndex;
 let selectedCurrency = currencyEl.options[currentIndex].value;
 let priceRated = 0;//<---------- aqui defino priceRated
-console.log(priceRated);
 
 populateUI();
+calculate();
 
 let ticketPrice = +movieSelect.value;
-console.log(ticketPrice);
 
 //Fetch exchange rate
 function calculate() {//<------------- aquí hago el calculo precio entrada a la divisa
   fetch(`https://api.exchangerate-api.com/v4/latest/${currencyEl.options[48].value}`)
     .then((res) => res.json())
     .then((data) => {
-      debugger;
-      console.log(currencyEl.value);
       const rate = data.rates[currencyEl.value];
-      console.log(rate);
 
       priceRated = (ticketPrice * rate).toFixed(2);//<---- lo guardo en price rated
-      console.log(priceRated);//<---- este console me devuelve el valor bueno
+
+      updateSelectedCount();
     });
     return priceRated;
 }
-console.log(priceRated);//<----- pero este me vuelve a devolver 0
-
-movieSelect.querySelectorAll('.mov-curr').forEach((option) => {
-  //no consigo hacer aparecer el nombre de la pelicula con el precio
-  option.innerText = `${movieSelect} ${ticketPrice}`;
-});
 
 //Save selected movie index and price
 function setMovieData(movieIndex, moviePrice) {
@@ -66,8 +55,16 @@ function updateSelectedCount() {
 
   const selectedSeatsCount = selectedSeats.length;
 
+  movieSelect.querySelectorAll('.mov-curr').forEach((_p) => {
+    option.innerText = `${+priceRated} ${currencyEl.value}`;
+  });
+
+  calculate();
+  priceRated= +priceRated;
+
   count.innerText = selectedSeatsCount;
-  total.innerText = selectedSeatsCount * ticketPrice;
+  total.innerText = (selectedSeatsCount * priceRated || selectedSeatsCount * ticketPrice).toFixed(2);
+  cur.innerText = currencyEl.value;
 }
 
 //Get data from local storage and populateUI
@@ -105,12 +102,13 @@ container.addEventListener('click', (e) => {
   }
 });
 
-//event current
+//event currency
 currencyEl.addEventListener('change', (e) => {
   //añadido para actualizar el valor de la divisa a elegir
   selectedCurrency = +e.target.value;
   setCurrencyData(e.target.value);
   calculate();//<----- ejecuto calculate siempre que cambio de divisa
+  updateSelectedCount();
 });
 
 //Initial count and total set
